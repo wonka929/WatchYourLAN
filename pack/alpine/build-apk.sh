@@ -4,8 +4,8 @@ set -e
 # NOTE: abuild must be run on an Alpine system (or in an Alpine chroot/container)
 # and NOT as root. See the README below for setup notes.
 
-HERE=$(cd "$(dirname "$0")" && pwd)
-PKGDIR=$(cd "$HERE" && pwd)
+HERE="/home/fra/WatchYourLAN/pack/alpine/"
+PKGDIR="/home/fra/WatchYourLAN/pack/alpine/"
 
 if ! command -v abuild >/dev/null 2>&1; then
   echo "abuild non trovato. Installa 'abuild' in Alpine: apk add abuild alpine-sdk" >&2
