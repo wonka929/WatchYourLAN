@@ -46,13 +46,14 @@ trap 'rm -rf "$tmpdir"' EXIT
 echo "Copia sorgenti in $tmpdir"
 mkdir -p "$tmpdir/$srcdir_name"
 
-# Copy repository contents into temporary build dir, excluding the temporary dir itself and VCS metadata.
-# Prefer rsync when available; otherwise use tar with exclude patterns.
-if command -v rsync >/dev/null 2>&1; then
-  rsync -a --exclude 'pack/alpine/build-tmp-*' --exclude '.git' "$PKGDIR/../" "$tmpdir/$srcdir_name/"
-else
-  (cd "$PKGDIR/../" && tar --exclude='pack/alpine/build-tmp-*' --exclude='.git' -cf - .) | (cd "$tmpdir/$srcdir_name" && tar -xf -)
-fi
+ # Copy repository contents into temporary build dir, escludendo la dir temporanea e i metadati VCS.
+ # Prefer rsync quando disponibile; altrimenti usa tar con pattern di esclusione.
+ PROJECT_ROOT="$PKGDIR/../../"
+ if command -v rsync >/dev/null 2>&1; then
+   rsync -a --exclude 'pack/alpine/build-tmp-*' --exclude '.git' "$PROJECT_ROOT" "$tmpdir/$srcdir_name/"
+ else
+   (cd "$PROJECT_ROOT" && tar --exclude='pack/alpine/build-tmp-*' --exclude='.git' -cf - .) | (cd "$tmpdir/$srcdir_name" && tar -xf -)
+ fi
 
 # Ensure APKBUILD is present in the source root (some setups expect it there)
 cp -f "$PKGDIR/APKBUILD" "$tmpdir/$srcdir_name/"
@@ -62,4 +63,4 @@ cd "$tmpdir/$srcdir_name"
 echo "Avvio build con abuild -r (richiede pacchetti makedepends installati)..."
 abuild -r
 
-echo "Build completata. I pacchetti si trovano in ~/packages/ o nella directory configurata da abuild." 
+echo "Build completata. I pacchetti si trovano in $PACKAGES o nella directory configurata da abuild." 
