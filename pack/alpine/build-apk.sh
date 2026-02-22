@@ -4,7 +4,9 @@ set -e
 # NOTE: abuild must be run on an Alpine system (or in an Alpine chroot/container)
 # and NOT as root. See the README below for setup notes.
 
-PKGDIR="/home/fra/WatchYourLAN/pack/alpine"
+# Imposta PKGDIR come directory dello script, portabile ovunque venga eseguito
+HERE=$(cd "$(dirname "$0")" && pwd)
+PKGDIR="$HERE"
 
 if ! command -v abuild >/dev/null 2>&1; then
   echo "abuild non trovato. Installa 'abuild' in Alpine: apk add abuild alpine-sdk" >&2
@@ -44,9 +46,9 @@ mkdir -p "$tmpdir"
 echo "Copia sorgenti in $tmpdir"
 mkdir -p "$tmpdir/$srcdir_name"
 
-# Copia solo la directory pack/alpine (cioè la directory dello script) nel tmpdir/$srcdir_name, escludendo la dir temporanea e i metadati VCS.
+# Copia il contenuto di pack/alpine direttamente dentro $tmpdir/$srcdir_name, evitando annidamenti.
 if command -v rsync >/dev/null 2>&1; then
-  rsync -a --exclude 'build-tmp-*' --exclude 'packages' --exclude '.git' "$PKGDIR/" "$tmpdir/$srcdir_name/"
+  rsync -a --exclude 'build-tmp-*' --exclude 'packages' --exclude '.git' "$PKGDIR/" "$tmpdir/$srcdir_name"
 else
   (cd "$PKGDIR" && tar --exclude='build-tmp-*' --exclude='packages' --exclude='.git' -cf - .) | (cd "$tmpdir/$srcdir_name" && tar -xf -)
 fi
