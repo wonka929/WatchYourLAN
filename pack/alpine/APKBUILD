@@ -8,7 +8,7 @@ pkgdesc="WatchYourLAN - network host scanner and UI"
 url="https://github.com/aceberg/WatchYourLAN"
 arch="x86_64"
 license="MIT"
-depends="inetutils-ping"
+depends=""
 makedepends="go git"
 
 source=""
