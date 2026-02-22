@@ -24,7 +24,10 @@ if [ ! -f "$HOME/.abuild/abuild-$(whoami).rsa" ]; then
 fi
 
 echo "Preparazione directory di build..."
-tmpdir=$(mktemp -d)
+# Create a temporary build directory inside pack/alpine to avoid permission/path issues
+# Use a unique name with timestamp, pid and random suffix
+tmpdir="$PKGDIR/build-tmp-$(date +%s)-$$-$RANDOM"
+mkdir -p "$tmpdir"
 trap 'rm -rf "$tmpdir"' EXIT
 
 echo "Copia sorgenti in $tmpdir"
