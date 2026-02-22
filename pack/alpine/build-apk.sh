@@ -38,9 +38,8 @@ export PACKAGES
 mkdir -p "$PACKAGES"
 
 # Create a temporary build directory inside pack/alpine to avoid permission/path issues
-tmpdir="$PKGDIR/build-tmp-$(date +%s)-$$-$RANDOM"
+tmpdir="$PKGDIR/build"
 mkdir -p "$tmpdir"
-trap 'rm -rf "$tmpdir"' EXIT
 
 echo "Copia sorgenti in $tmpdir"
 mkdir -p "$tmpdir/$srcdir_name"
