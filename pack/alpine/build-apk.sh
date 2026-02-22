@@ -29,7 +29,9 @@ trap 'rm -rf "$tmpdir"' EXIT
 
 echo "Copia sorgenti in $tmpdir"
 # copy repository into a folder named watchyourlan-<ver> as expected by abuild
-cp -a "$PKGDIR/../." "$tmpdir/watchyourlan-2.4.1"
+# use recursive copy without preserving ownership to avoid "Operation not permitted"
+mkdir -p "$tmpdir/watchyourlan-2.4.1"
+cp -r "$PKGDIR/../." "$tmpdir/watchyourlan-2.4.1"
 cp "$PKGDIR/APKBUILD" "$tmpdir/watchyourlan-2.4.1/"
 
 cd "$tmpdir/watchyourlan-2.4.1"
