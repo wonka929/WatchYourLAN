@@ -46,14 +46,12 @@ trap 'rm -rf "$tmpdir"' EXIT
 echo "Copia sorgenti in $tmpdir"
 mkdir -p "$tmpdir/$srcdir_name"
 
- # Copy repository contents into temporary build dir, escludendo la dir temporanea e i metadati VCS.
- # Prefer rsync quando disponibile; altrimenti usa tar con pattern di esclusione.
- PROJECT_ROOT="$PKGDIR/../../"
- if command -v rsync >/dev/null 2>&1; then
-   rsync -a --exclude 'pack/alpine/build-tmp-*' --exclude '.git' "$PROJECT_ROOT" "$tmpdir/$srcdir_name/"
- else
-   (cd "$PROJECT_ROOT" && tar --exclude='pack/alpine/build-tmp-*' --exclude='.git' -cf - .) | (cd "$tmpdir/$srcdir_name" && tar -xf -)
- fi
+# Copia solo la directory pack/alpine (cioè la directory dello script) nel tmpdir/$srcdir_name, escludendo la dir temporanea e i metadati VCS.
+if command -v rsync >/dev/null 2>&1; then
+  rsync -a --exclude 'build-tmp-*' --exclude 'packages' --exclude '.git' "$PKGDIR/" "$tmpdir/$srcdir_name/"
+else
+  (cd "$PKGDIR" && tar --exclude='build-tmp-*' --exclude='packages' --exclude='.git' -cf - .) | (cd "$tmpdir/$srcdir_name" && tar -xf -)
+fi
 
 # Ensure APKBUILD is present in the source root (some setups expect it there)
 cp -f "$PKGDIR/APKBUILD" "$tmpdir/$srcdir_name/"
